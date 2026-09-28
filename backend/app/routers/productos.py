@@ -1,7 +1,8 @@
 """
 Rutas de la API para productos.
 
-    GET    /productos?buscar=texto   -> lista (filtra por nombre o código)
+    GET    /productos?buscar=texto&stock=con|sin
+                                     -> lista (filtra por nombre o código y por stock)
     GET    /productos/{id}           -> consulta un producto
     POST   /productos                -> crea
     PUT    /productos/{id}           -> actualiza
@@ -11,6 +12,8 @@ Aquí están las REGLAS DE NEGOCIO que responden al usuario:
   - el código no se puede repetir (409)
   - un producto que no existe devuelve 404 con un mensaje claro
 """
+from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -76,9 +79,13 @@ def listar_productos(
         max_length=100,
         description="Texto a buscar en el nombre o el código (no distingue mayúsculas).",
     ),
+    stock: Literal["con", "sin"] | None = Query(
+        default=None,
+        description='"con" = cantidad mayor que 0; "sin" = cantidad igual a 0; vacío = todos.',
+    ),
     db: Session = Depends(get_db),
 ):
-    return crud.listar(db, buscar)
+    return crud.listar(db, buscar, stock)
 
 
 @router.get("/{producto_id}", response_model=ProductoSalida, summary="Consultar un producto")

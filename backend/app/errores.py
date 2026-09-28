@@ -11,10 +11,15 @@ Formato de respuesta de error (siempre igual, para que React lo lea fácil):
       "errores": {"precio": "El precio debe ser mayor que 0."}   <- por campo
     }
 """
+import logging
+
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import OperationalError
+
+# Registro que se muestra en el terminal donde corre uvicorn
+registro = logging.getLogger("uvicorn.error")
 
 # Nombre legible de cada campo y su terminación de género (o/a)
 CAMPOS = {
@@ -24,6 +29,7 @@ CAMPOS = {
     "precio": ("El precio", "o"),
     "cantidad": ("La cantidad", "a"),
     "producto_id": ("El identificador del producto", "o"),
+    "stock": ("El filtro de stock", "o"),
 }
 
 
@@ -36,6 +42,7 @@ def _traducir(tipo: str, ctx: dict, genero: str) -> str:
         "string_type": "debe ser texto",
         "greater_than": f"debe ser mayor que {ctx.get('gt')}",
         "greater_than_equal": f"debe ser mayor o igual a {ctx.get('ge')}",
+        "less_than_equal": f"debe ser menor o igual a {ctx.get('le')}",
         "int_parsing": "debe ser un número entero",
         "int_type": "debe ser un número entero",
         "int_from_float": "debe ser un número entero (sin decimales)",
@@ -44,6 +51,7 @@ def _traducir(tipo: str, ctx: dict, genero: str) -> str:
         "decimal_max_places": f"puede tener como máximo {ctx.get('decimal_places')} decimales",
         "decimal_max_digits": "es demasiado grande",
         "decimal_whole_digits": "es demasiado grande",
+        "literal_error": "no es una opción válida",
     }
     return mensajes.get(tipo, "tiene un valor no válido")
 
@@ -72,6 +80,8 @@ async def manejar_error_validacion(request: Request, exc: RequestValidationError
 
 async def manejar_error_conexion(request: Request, exc: OperationalError):
     """Si PostgreSQL está apagado o la contraseña es incorrecta, lo decimos claramente."""
+    # Al usuario le damos un mensaje simple; en el terminal dejamos la causa exacta
+    registro.error("No se pudo conectar con PostgreSQL: %s", exc.orig)
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={

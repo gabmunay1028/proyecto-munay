@@ -11,9 +11,19 @@ from .models import Producto
 from .schemas import ProductoEntrada
 
 
-def listar(db: Session, buscar: str | None = None) -> list[Producto]:
-    """Productos activos ordenados por nombre. Si hay texto, filtra por nombre o código."""
+def listar(db: Session, buscar: str | None = None, stock: str | None = None) -> list[Producto]:
+    """
+    Productos activos ordenados por nombre.
+      - buscar: filtra por nombre o código.
+      - stock: "con" = cantidad mayor que 0; "sin" = cantidad igual a 0; None = todos.
+    Los dos filtros se pueden combinar.
+    """
     consulta = select(Producto).where(Producto.activo.is_(True))
+
+    if stock == "con":
+        consulta = consulta.where(Producto.cantidad > 0)
+    elif stock == "sin":
+        consulta = consulta.where(Producto.cantidad == 0)
 
     texto = (buscar or "").strip()
     if texto:
