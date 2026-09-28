@@ -33,7 +33,6 @@ Se realizo la aplicacion AiMunay como respuesta al documento pedido.
 | Orden | Nombre (A–Z) por defecto; también precio de menor a mayor y de mayor a menor. Si dos productos cuestan lo mismo, se ordenan por nombre. Se combina con la búsqueda y el filtro; "Ver todos los productos" limpia los filtros pero conserva el orden | Pedido del asesor (28/09) |
 | Páginas | Tres: catálogo (bienvenida, buscador, filtro, eliminar), formulario (registrar y editar) y productos eliminados. Enlaces "Catálogo" y "Eliminados" en el encabezado | — |
 | Textos | Se quitan los espacios al inicio y al final | — |
-| Carga y animaciones | Esqueletos de carga en todas las páginas (solo aparecen si la carga pasa de 150 ms) y tarjetas que se elevan al pasar el mouse o el teclado. Se desactivan si el sistema pide reducir el movimiento | — |
 | Validación | En tres niveles: formulario (React), API (Pydantic) y base de datos (restricciones) | — |
 | Mensajes de error | Siempre en español, con el formato `{"detail": "...", "errores": {campo: mensaje}}` | — |
 
@@ -111,7 +110,6 @@ proyecto-aimunay/
 | DELETE | `/productos/{id}` | Quita el producto del catálogo | 200 · 404 |
 | GET | `/categorias` | Categorías de los productos activos, sin repetir y en orden alfabético | 200 |
 
-Si PostgreSQL no está disponible, la API responde **503** con un mensaje claro y registra la causa exacta en el terminal.
 Documentación interactiva: **http://localhost:8000/docs**
 
 ## Páginas del frontend
@@ -359,4 +357,3 @@ Se usó **Claude**, asistente de IA como apoyo en el desarrollo:
 - **Base de datos:** consultas SQL en pgAdmin equivalentes a cada filtro y orden, comparadas con las respuestas de la API.
 - **Interfaz:** las comprobaciones de la sección "Comprobaciones manuales", en escritorio y en vista de celular (F12).
 
-El repositorio no incluye conversaciones privadas, contraseñas ni el archivo `.env`.
