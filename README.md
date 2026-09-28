@@ -29,6 +29,7 @@ Aplicación web para registrar, buscar, actualizar y quitar productos del catál
 | Cantidad | Número entero entre 0 y 2 147 483 647 (límite de `INTEGER`) | Por confirmar |
 | Búsqueda | Por nombre **o** código, texto parcial, sin distinguir mayúsculas | Por confirmar |
 | Filtro de stock | "Sin stock" = cantidad 0; "con stock" = cantidad mayor que 0. Opción "Todos" por defecto. Se combina con la búsqueda y se resuelve en el backend | Pedido del asesor (28/09) |
+| Orden | Nombre (A–Z) por defecto; también precio de menor a mayor y de mayor a menor. Si dos productos cuestan lo mismo, se ordenan por nombre. Se combina con la búsqueda y el filtro; "Ver todos los productos" limpia los filtros pero conserva el orden | Pedido del asesor (28/09) |
 | Páginas | Tres: catálogo (bienvenida, buscador, filtro, eliminar), formulario (registrar y editar) y productos eliminados. Enlaces "Catálogo" y "Eliminados" en el encabezado | — |
 | Textos | Se quitan los espacios al inicio y al final | — |
 | Carga y animaciones | Esqueletos de carga en todas las páginas (solo aparecen si la carga pasa de 150 ms) y tarjetas que se elevan al pasar el mouse o el teclado. Se desactivan si el sistema pide reducir el movimiento | — |
@@ -58,6 +59,7 @@ proyecto-aimunay/
 │   │   ├── conftest.py
 │   │   ├── test_productos.py
 │   │   ├── test_filtro_stock.py
+│   │   ├── test_orden_precio.py
 │   │   ├── test_eliminados.py
 │   │   └── test_categorias.py
 │   ├── .env.example
@@ -73,7 +75,8 @@ proyecto-aimunay/
     │   │   ├── Buscador.jsx
     │   │   ├── Skeleton.jsx           # esqueletos de carga (tarjetas, formulario y tabla)
     │   │   ├── FiltroStock.jsx        # lista desplegable Todos / Con stock / Sin stock
-    │   │   ├── Iconos.jsx             # íconos SVG (flecha, papelera)
+    │   │   ├── Iconos.jsx             # íconos SVG (flecha, papelera, filtro, orden)
+    │   │   ├── OrdenProductos.jsx     # lista desplegable Nombre / Precio menor-mayor / mayor-menor
     │   │   ├── ProductoCard.jsx       # tarjeta con Editar y Eliminar
     │   │   └── SelectorCategoria.jsx  # lista de categorías + opción nueva
     │   ├── pages/
@@ -99,7 +102,7 @@ proyecto-aimunay/
 
 | Método | Ruta | Descripción | Respuestas |
 |---|---|---|---|
-| GET | `/productos?buscar=texto&stock=todos\|con\|sin` | Lista los productos activos; filtra por nombre o código y por stock | 200 · 422 filtro inválido |
+| GET | `/productos?buscar=texto&stock=todos\|con\|sin&orden=nombre\|precio_asc\|precio_desc` | Lista los productos activos; filtra por nombre o código y por stock, y los ordena | 200 · 422 filtro u orden inválido |
 | GET | `/productos/eliminados?buscar=texto` | Productos eliminados, del más reciente al más antiguo, con su fecha de eliminación | 200 |
 | GET | `/productos/{id}` | Consulta un producto | 200 · 404 |
 | POST | `/productos` | Registra un producto | 201 · 409 código repetido · 422 datos inválidos |
@@ -114,7 +117,7 @@ Documentación interactiva: **http://localhost:8000/docs**
 
 | Dirección | Página |
 |---|---|
-| `/` | Catálogo: bienvenida, buscador, filtro de stock, tarjetas con Editar y Eliminar |
+| `/` | Catálogo: bienvenida, buscador, filtro de stock, orden por precio, tarjetas con Editar y Eliminar |
 | `/productos/nuevo` | Formulario para registrar un producto |
 | `/productos/{id}/editar` | El mismo formulario, cargado con los datos del producto |
 | `/productos/eliminados` | Tabla de productos eliminados con buscador (solo consulta) |
@@ -187,6 +190,7 @@ Reglas de negocio cubiertas:
 - Un producto quitado deja de aparecer en el listado y en la consulta.
 - Las categorías se listan sin repetir, ordenadas y solo de productos activos.
 - El filtro de stock separa cantidad 0 de cantidad mayor que 0, se combina con la búsqueda y rechaza valores inválidos.
+- El orden por precio funciona en ambos sentidos, desempata por nombre, se combina con la búsqueda y el filtro, y rechaza valores inválidos.
 - Al eliminar, el producto pasa a la lista de eliminados con su fecha; la lista se puede buscar, muestra primero el más reciente, y el aviso de código ocupado indica dónde verlo.
 
 ---
@@ -213,6 +217,8 @@ Reglas de negocio cubiertas:
 | 14 | Listar con `stock=poco` | 422 "El filtro de stock no es una opción válida." | |
 | 15 | Eliminar un producto y luego `GET /productos/eliminados` | Aparece con su fecha en `eliminado_en` | |
 | 16 | Registrar con el código de un producto eliminado | 409 "… pertenece a un producto eliminado (…); puedes verlo en «Productos eliminados»…" | |
+| 17 | En `/docs` → `GET /productos` → `orden` = `precio_asc` → Execute | Productos del más barato al más caro | |
+| 18 | Listar con `orden=barato` | 422 "El orden no es una opción válida." | |
 
 ### Frontend (desde http://localhost:5173)
 
@@ -247,6 +253,9 @@ Reglas de negocio cubiertas:
 | 27 | Buscar en Eliminados | Solo los eliminados que coinciden; si no hay, "No se encontró ningún producto eliminado con «…»." | |
 | 28 | Registrar un producto con el código de uno eliminado | El aviso indica que se puede ver en «Productos eliminados» | |
 | 29 | Abrir Eliminados en el celular | Cada producto se ve como una ficha con sus títulos, sin desplazamiento horizontal | |
+| 30 | Orden → "Precio: menor a mayor" y luego "mayor a menor" | Las tarjetas se reordenan por precio; la lista se resalta en azul | |
+| 31 | Filtro "sin stock" + orden "mayor a menor" | Solo los de cantidad 0, del más caro al más barato | |
+| 32 | Con un orden elegido, buscar algo sin resultados → "Ver todos los productos" | Vuelven todos y el orden elegido se mantiene | |
 
 ## Mejora propuesta: selector de categorías
 
@@ -270,6 +279,12 @@ Reglas de negocio cubiertas:
 - Se enlaza desde el encabezado, desde la ventana de eliminar y desde el aviso de código ocupado.
 - Verificación: 4 pruebas automáticas nuevas (`test_eliminados.py`) y las comprobaciones manuales 15, 16 y 25 a 29.
 
+**Orden por precio (asesor, 28/09):** ordenar el catálogo por precio.
+- Se implementó como una lista aparte del filtro de stock, porque ordenar no quita productos: así se pueden combinar (por ejemplo, "sin stock" del más caro al más barato).
+- Opciones: Nombre (A–Z) por defecto, precio de menor a mayor y de mayor a menor; los empates se ordenan por nombre para que el resultado sea siempre el mismo.
+- Se resuelve en el backend (`orden=precio_asc|precio_desc`), igual que la búsqueda y el filtro.
+- Verificación: 5 pruebas automáticas nuevas (`test_orden_precio.py`) y las comprobaciones manuales 17, 18 y 30 a 32.
+
 ## Pendientes y avances
 
 | # | Tarea | Origen | Estado |
@@ -287,13 +302,14 @@ Reglas de negocio cubiertas:
 | 11 | Filtro de productos con y sin stock; bienvenida centrada | Asesor (28/09) | Realizado |
 | 12 | Filtro de stock como lista desplegable en `/docs` | Propio | Realizado |
 | 13 | Página de productos eliminados | Supervisor (28/09) | Realizado |
-| 14 | Confirmar las decisiones marcadas "Por confirmar" | Encargo | Pendiente |
-| 15 | Completar objetivo y alcance acordado | Encargo | Pendiente |
-| 16 | Llenar "Resultado obtenido" en las comprobaciones manuales | Encargo | Pendiente |
-| 17 | Completar tiempo efectivo y herramientas utilizadas (incluido el uso de IA) | Encargo | Pendiente |
-| 18 | Clonar el repositorio en otra carpeta y levantarlo siguiendo solo este README | Encargo | Pendiente |
-| 19 | Marcar la entrega base con `git tag entrega-base` | Encargo | Pendiente |
-| 20 | Aplicar la regla de categorías también en el backend (hoy solo la aplica el formulario) | Propio | Pendiente (propuesta) |
+| 14 | Orden por precio (menor a mayor y mayor a menor) | Asesor (28/09) | Realizado |
+| 15 | Confirmar las decisiones marcadas "Por confirmar" | Encargo | Pendiente |
+| 16 | Completar objetivo y alcance acordado | Encargo | Pendiente |
+| 17 | Llenar "Resultado obtenido" en las comprobaciones manuales | Encargo | Pendiente |
+| 18 | Completar tiempo efectivo y herramientas utilizadas (incluido el uso de IA) | Encargo | Pendiente |
+| 19 | Clonar el repositorio en otra carpeta y levantarlo siguiendo solo este README | Encargo | Pendiente |
+| 20 | Marcar la entrega base con `git tag entrega-base` | Encargo | Pendiente |
+| 21 | Aplicar la regla de categorías también en el backend (hoy solo la aplica el formulario) | Propio | Pendiente (propuesta) |
 
 **Posibles mejoras futuras (no incluidas, a conversar):** restaurar un producto eliminado, filtro por categoría y aviso de stock bajo.
 
