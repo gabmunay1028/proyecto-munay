@@ -99,6 +99,15 @@ h1 {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 80ms ease;
+}
+
+/* Al presionar, el botón "se hunde" un poco */
+.boton:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .boton:disabled {
@@ -413,5 +422,107 @@ select:focus-visible {
   .catalogo__intro .boton,
   .formulario__acciones .boton {
     flex: 1;
+  }
+}
+
+/* ---------- Animaciones de las tarjetas ---------- */
+
+/* Al aparecer, cada tarjeta sube un poco con una pequeña demora escalonada.
+   "backwards" aplica el estado inicial durante la demora, pero al terminar
+   deja libre la propiedad transform para que funcione la elevación. */
+.tarjeta--producto {
+  animation: entrar-tarjeta 280ms ease-out backwards;
+  animation-delay: calc(min(var(--orden, 0), 8) * 45ms);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+/* Al pasar el mouse o al llegar con el teclado (Tab), la tarjeta se eleva */
+.tarjeta--producto:hover,
+.tarjeta--producto:has(:focus-visible) {
+  transform: translateY(-4px);
+  border-color: #b9c9e4;
+  box-shadow:
+    0 12px 24px rgb(16 24 40 / 12%),
+    0 2px 6px rgb(16 24 40 / 8%);
+}
+
+/* Mientras se elimina, la tarjeta se atenúa y no se puede tocar */
+.tarjeta--eliminando {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Mientras se actualiza la búsqueda, las tarjetas actuales se atenúan */
+.grilla--actualizando {
+  opacity: 0.6;
+  transition: opacity 150ms ease 200ms;
+}
+
+@keyframes entrar-tarjeta {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Esqueletos de carga ---------- */
+
+/* Aparece solo si la carga tarda más de 150 ms, para evitar un parpadeo */
+.esqueleto-contenedor {
+  animation: aparecer 200ms ease-out 150ms backwards;
+}
+
+.esqueleto {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8ecf1 25%, #f5f7fa 50%, #e8ecf1 75%);
+  background-size: 300% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+.esqueleto--pildora {
+  border-radius: 999px;
+}
+
+.tarjeta__acciones .esqueleto {
+  flex: 1;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes brillo {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* ---------- Movimiento reducido ----------
+   Si la persona pidió a su sistema reducir el movimiento, se quitan las animaciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .tarjeta--producto:hover,
+  .tarjeta--producto:has(:focus-visible),
+  .boton:active:not(:disabled) {
+    transform: none;
   }
 }

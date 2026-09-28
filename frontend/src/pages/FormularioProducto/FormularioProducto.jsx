@@ -7,6 +7,7 @@ import {
   obtenerProducto,
 } from "../../api/productos.js";
 import Aviso from "../../components/Aviso.jsx";
+import { SkeletonFormulario } from "../../components/Skeleton.jsx";
 import SelectorCategoria from "../../components/SelectorCategoria.jsx";
 import { validarProducto } from "../../utils/validaciones.js";
 
@@ -129,10 +130,6 @@ export default function FormularioProducto() {
     }
   }
 
-  if (cargando) {
-    return <p className="texto-suave">Cargando…</p>;
-  }
-
   return (
     <section className="pagina-formulario">
       <Link to="/" className="enlace-volver">
@@ -145,9 +142,19 @@ export default function FormularioProducto() {
           : "Completa los datos para registrar el producto en el catálogo."}
       </p>
 
+      {/* Mientras cargan los datos: el título ya se ve y el formulario aparece como esqueleto */}
+      {cargando && (
+        <>
+          <p className="visualmente-oculto" role="status">
+            Cargando formulario…
+          </p>
+          <SkeletonFormulario />
+        </>
+      )}
+
       {aviso && <Aviso tipo={aviso.tipo} texto={aviso.texto} onCerrar={cerrarAviso} />}
 
-      {!noEncontrado && (
+      {!cargando && !noEncontrado && (
         <form className="formulario" onSubmit={guardar} noValidate>
           <Campo
             nombre="codigo"

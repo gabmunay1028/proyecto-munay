@@ -12,7 +12,7 @@ export default function App() {
           <Link to="/" className="encabezado__marca">
             {NOMBRE_EMPRESA}
           </Link>
-          <span className="encabezado__subtitulo">Catálogo de productos</span>
+          
         </div>
       </header>
 

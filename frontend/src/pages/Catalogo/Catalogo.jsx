@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { eliminarProducto, listarProductos } from "../../api/productos.js";
 import Aviso from "../../components/Aviso.jsx";
 import Buscador from "../../components/Buscador.jsx";
+import { SkeletonTarjetas } from "../../components/Skeleton.jsx";
 import ProductoCard from "../../components/ProductoCard.jsx";
 
 /**
@@ -114,7 +115,10 @@ export default function Catalogo() {
         {cargando ? "Cargando…" : errorCarga ? "" : texto ? `${conteo} para «${texto}»` : conteo}
       </p>
 
-      {!cargando && productos.length === 0 ? (
+      {cargando && productos.length === 0 ? (
+        // Primera carga (o reintento): tarjetas de relleno mientras llegan los datos
+        <SkeletonTarjetas />
+      ) : productos.length === 0 ? (
         <div className="vacio">
           {errorCarga ? (
             <>
@@ -134,13 +138,15 @@ export default function Catalogo() {
           )}
         </div>
       ) : (
-        <div className="grilla">
-          {productos.map((producto) => (
+        // Si ya hay tarjetas y se está buscando, se quedan atenuadas hasta que llegue la respuesta
+        <div className={`grilla${cargando ? " grilla--actualizando" : ""}`} aria-busy={cargando}>
+          {productos.map((producto, indice) => (
             <ProductoCard
               key={producto.id}
               producto={producto}
               onEliminar={eliminar}
               eliminando={idEliminando === producto.id}
+              orden={indice}
             />
           ))}
         </div>

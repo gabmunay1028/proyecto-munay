@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 // Muestra el precio como "S/ 59.90"
 const formatoSoles = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" });
 
-/** Tarjeta de un producto con sus datos y las acciones Editar y Eliminar. */
-export default function ProductoCard({ producto, onEliminar, eliminando }) {
+/**
+ * Tarjeta de un producto con sus datos y las acciones Editar y Eliminar.
+ * "orden" es su posición en la lista: sirve para que las tarjetas aparezcan una tras otra.
+ */
+export default function ProductoCard({ producto, onEliminar, eliminando, orden = 0 }) {
+  const clases = `tarjeta tarjeta--producto${eliminando ? " tarjeta--eliminando" : ""}`;
   return (
-    <article className="tarjeta">
+    <article className={clases} style={{ "--orden": orden }} aria-busy={eliminando}>
       <div className="tarjeta__cabecera">
         <h2 className="tarjeta__nombre">{producto.nombre}</h2>
         <span className="tarjeta__codigo">{producto.codigo}</span>
