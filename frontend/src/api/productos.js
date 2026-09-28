@@ -63,3 +63,7 @@ export function actualizarProducto(id, producto) {
 export function eliminarProducto(id) {
   return pedir(`/productos/${id}`, { method: "DELETE" });
 }
+
+export function listarCategorias() {
+  return pedir("/categorias");
+}

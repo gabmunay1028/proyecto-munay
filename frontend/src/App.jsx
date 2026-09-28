@@ -3,7 +3,7 @@ import { NOMBRE_EMPRESA } from "./config.js";
 import Catalogo from "./pages/Catalogo/Catalogo.jsx";
 import FormularioProducto from "./pages/FormularioProducto/FormularioProducto.jsx";
 
-/** Estructura general: encabezado fijo y la página según la dirección. */
+//Estructura de las rutas de la pagina aimunay
 export default function App() {
   return (
     <>

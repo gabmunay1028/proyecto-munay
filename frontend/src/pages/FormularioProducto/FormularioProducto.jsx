@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { actualizarProducto, crearProducto, obtenerProducto } from "../../api/productos.js";
+import {
+  actualizarProducto,
+  crearProducto,
+  listarCategorias,
+  obtenerProducto,
+} from "../../api/productos.js";
 import Aviso from "../../components/Aviso.jsx";
+import SelectorCategoria from "../../components/SelectorCategoria.jsx";
 import { validarProducto } from "../../utils/validaciones.js";
 
 const FORMULARIO_VACIO = { codigo: "", nombre: "", categoria: "", precio: "", cantidad: "" };
@@ -16,22 +22,33 @@ export default function FormularioProducto() {
   const navigate = useNavigate();
 
   const [datos, setDatos] = useState(FORMULARIO_VACIO);
+  const [categorias, setCategorias] = useState([]);
   const [errores, setErrores] = useState({});
   const [aviso, setAviso] = useState(null);
-  const [cargando, setCargando] = useState(esEdicion);
+  const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [noEncontrado, setNoEncontrado] = useState(false);
 
   const cerrarAviso = useCallback(() => setAviso(null), []);
 
-  // En modo edición, carga los datos actuales del producto
+  // Carga a la vez las categorías y, si es edición, los datos del producto
   useEffect(() => {
-    if (!esEdicion) return;
     let vigente = true;
 
-    obtenerProducto(id)
-      .then((producto) => {
-        if (!vigente) return;
+    async function cargar() {
+      const [respuestaCategorias, respuestaProducto] = await Promise.allSettled([
+        listarCategorias(),
+        esEdicion ? obtenerProducto(id) : Promise.resolve(null),
+      ]);
+      if (!vigente) return;
+
+      // Si fallan las categorías no es grave: el campo queda como texto libre
+      if (respuestaCategorias.status === "fulfilled") {
+        setCategorias(respuestaCategorias.value);
+      }
+
+      if (respuestaProducto.status === "fulfilled" && respuestaProducto.value) {
+        const producto = respuestaProducto.value;
         setDatos({
           codigo: producto.codigo,
           nombre: producto.nombre,
@@ -39,28 +56,31 @@ export default function FormularioProducto() {
           precio: producto.precio.toFixed(2),
           cantidad: String(producto.cantidad),
         });
-      })
-      .catch((error) => {
-        if (!vigente) return;
+      } else if (respuestaProducto.status === "rejected") {
+        const error = respuestaProducto.reason;
         setAviso({ tipo: "error", texto: error.message });
         if (error.estado === 404) setNoEncontrado(true);
-      })
-      .finally(() => {
-        if (vigente) setCargando(false);
-      });
+      }
 
+      setCargando(false);
+    }
+
+    cargar();
     return () => {
       vigente = false;
     };
   }, [id, esEdicion]);
 
-  function cambiar(evento) {
-    const { name, value } = evento.target;
-    setDatos((anterior) => ({ ...anterior, [name]: value }));
+  function actualizarCampo(nombre, valor) {
+    setDatos((anterior) => ({ ...anterior, [nombre]: valor }));
     // Al corregir un campo, se quita su mensaje de error
-    if (errores[name]) {
-      setErrores(({ [name]: _quitado, ...resto }) => resto);
+    if (errores[nombre]) {
+      setErrores(({ [nombre]: _quitado, ...resto }) => resto);
     }
+  }
+
+  function cambiar(evento) {
+    actualizarCampo(evento.target.name, evento.target.value);
   }
 
   async function guardar(evento) {
@@ -75,10 +95,17 @@ export default function FormularioProducto() {
       return;
     }
 
+    // Si escribió como "nueva" una categoría que ya existe (p. ej. "abrigo"),
+    // se usa la registrada ("Abrigo") para no crear duplicados
+    const categoriaEscrita = datos.categoria.trim();
+    const categoria =
+      categorias.find((c) => c.toLowerCase() === categoriaEscrita.toLowerCase()) ??
+      categoriaEscrita;
+
     const producto = {
       codigo: datos.codigo.trim(),
       nombre: datos.nombre.trim(),
-      categoria: datos.categoria.trim(),
+      categoria,
       precio: Number(datos.precio),
       cantidad: Number(datos.cantidad),
     };
@@ -103,7 +130,7 @@ export default function FormularioProducto() {
   }
 
   if (cargando) {
-    return <p className="texto-suave">Cargando producto…</p>;
+    return <p className="texto-suave">Cargando…</p>;
   }
 
   return (
@@ -141,14 +168,11 @@ export default function FormularioProducto() {
             onChange={cambiar}
             maxLength={100}
           />
-          <Campo
-            nombre="categoria"
-            etiqueta="Categoría"
-            ayuda="Ej.: Abrigo, Camisas, Pantalones."
+          <SelectorCategoria
+            categorias={categorias}
             valor={datos.categoria}
             error={errores.categoria}
-            onChange={cambiar}
-            maxLength={50}
+            onCambiar={(valor) => actualizarCampo("categoria", valor)}
           />
           <div className="formulario__fila">
             <Campo

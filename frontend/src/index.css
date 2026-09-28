@@ -335,7 +335,8 @@ input:focus-visible,
   font-weight: 600;
 }
 
-input {
+input,
+select {
   width: 100%;
   min-height: 42px;
   padding: 8px 12px;
@@ -346,8 +347,35 @@ input {
   font: inherit;
 }
 
-input[aria-invalid="true"] {
+input[aria-invalid="true"],
+select[aria-invalid="true"] {
   border-color: var(--peligro);
+}
+
+select:focus-visible {
+  outline: 3px solid rgb(31 95 191 / 35%);
+  outline-offset: 2px;
+}
+
+/* Botón con aspecto de enlace (p. ej. "← Elegir de la lista") */
+.boton-enlace {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primario);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.boton-enlace:hover {
+  text-decoration: underline;
+}
+
+.boton-enlace:focus-visible {
+  outline: 3px solid rgb(31 95 191 / 35%);
+  outline-offset: 2px;
 }
 
 .campo__codigo {

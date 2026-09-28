@@ -1,9 +1,4 @@
-/**
- * Validaciones del formulario, con las mismas reglas que el backend.
- *
- * Sirven para avisar al usuario ANTES de enviar. El backend vuelve a validar
- * siempre, porque es la regla real (alguien podría llamar a la API sin este formulario).
- */
+
 const TEXTOS = {
   codigo: { etiqueta: "El código", genero: "o", maximo: 20 },
   nombre: { etiqueta: "El nombre", genero: "o", maximo: 100 },
