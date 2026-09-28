@@ -30,6 +30,17 @@ def listar(db: Session, buscar: str | None = None) -> list[Producto]:
     return list(db.scalars(consulta))
 
 
+def listar_categorias(db: Session) -> list[str]:
+    """Categorías de los productos activos, sin repetir y en orden alfabético."""
+    consulta = (
+        select(Producto.categoria)
+        .where(Producto.activo.is_(True))
+        .distinct()
+        .order_by(Producto.categoria)
+    )
+    return list(db.scalars(consulta))
+
+
 def obtener(db: Session, producto_id: int) -> Producto | None:
     """Un producto activo por su id; None si no existe o fue dado de baja."""
     producto = db.get(Producto, producto_id)

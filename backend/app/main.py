@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import OperationalError
 
 from .errores import manejar_error_conexion, manejar_error_validacion
-from .routers import productos
+from .routers import categorias, productos
 
 load_dotenv()
 
@@ -38,6 +38,7 @@ app.add_exception_handler(RequestValidationError, manejar_error_validacion)
 app.add_exception_handler(OperationalError, manejar_error_conexion)
 
 app.include_router(productos.router)
+app.include_router(categorias.router)
 
 
 @app.get("/", tags=["Inicio"], summary="Comprobar que la API responde")

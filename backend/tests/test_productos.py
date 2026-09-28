@@ -1,7 +1,8 @@
 """
-Pruebas automatizadas de las reglas de negocio del catálogo.
 
-Ejecutar desde la carpeta backend:
+Se realizan pruebas para que no se peudan repetir.
+
+para el backend solo crear:
     pytest -v
 """
 import pytest
@@ -20,7 +21,7 @@ def crear(cliente, **cambios):
     return cliente.post("/productos", json={**POLERA, **cambios})
 
 
-# ---------- Regla principal: el código no se puede repetir ----------
+# ---------- El codigo no se repite----------
 
 def test_no_permite_registrar_dos_productos_con_el_mismo_codigo(cliente):
     assert crear(cliente).status_code == 201
