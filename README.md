@@ -306,7 +306,7 @@ Reglas de negocio cubiertas:
 | 15 | Confirmar las decisiones marcadas "Por confirmar" | Encargo | Pendiente |
 | 16 | Completar objetivo y alcance acordado | Encargo | Pendiente |
 | 17 | Llenar "Resultado obtenido" en las comprobaciones manuales | Encargo | Pendiente |
-| 18 | Completar tiempo efectivo y herramientas utilizadas (incluido el uso de IA) | Encargo | Pendiente |
+| 18 | Completar tiempo efectivo y herramientas utilizadas (incluido el uso de IA) | Encargo | Realizado |
 | 19 | Clonar el repositorio en otra carpeta y levantarlo siguiendo solo este README | Encargo | Pendiente |
 | 20 | Marcar la entrega base con `git tag entrega-base` | Encargo | Pendiente |
 | 21 | Aplicar la regla de categorías también en el backend (hoy solo la aplica el formulario) | Propio | Pendiente (propuesta) |
@@ -315,8 +315,49 @@ Reglas de negocio cubiertas:
 
 ## Tiempo efectivo aproximado
 
-> *(Completar.)*
+**≈ 5 h 30 min**, el 28/09/2026 (de 08:40 a 15:30, descontando la pausa del mediodía).
+
+| Etapa | Tiempo aprox. |
+|---|---|
+| Lectura del encargo, preguntas y plan de arquitectura | 20 min |
+| Backend, base de datos y pruebas automatizadas | 55 min |
+| Entorno en Windows y bloqueos resueltos (activación del entorno virtual, `.env`, contraseña de PostgreSQL) | 35 min |
+| Frontend: catálogo, buscador y formulario | 35 min |
+| Repositorio Git y GitHub | 10 min |
+| Mejoras de interfaz: selector de categorías, ícono, esqueletos, animaciones, ventana de confirmación | 55 min |
+| Ajustes de la revisión: filtro de stock, productos eliminados, orden por precio | 1 h 10 min |
+| Verificación manual y documentación | 50 min |
 
 ## Herramientas utilizadas
 
-> *(Completar: documentación consultada, librerías, uso de IA y cómo se comprobó el resultado.)*
+### Tecnologías
+- **Backend:** Python 3.14, FastAPI, SQLAlchemy 2.1, Pydantic 2, psycopg 3, Uvicorn y python-dotenv.
+- **Base de datos:** PostgreSQL 18 y pgAdmin 4.
+- **Frontend:** React 19, Vite 8 y React Router 7; oxlint para revisar el código.
+- **Pruebas:** pytest con el cliente de pruebas de FastAPI.
+- **Entorno:** Visual Studio Code, PowerShell, Git Bash, Git y GitHub (repositorio privado).
+- **Documentación de apoyo:** la documentación interactiva de la propia API (`/docs`).
+
+### Uso de inteligencia artificial
+Se usó **Claude**, asistente de IA de Anthropic, como apoyo durante todo el desarrollo:
+- **Análisis:** revisar el encargo, identificar las preguntas para la reunión y proponer la arquitectura.
+- **Código:** generar la primera versión del backend, el frontend, los scripts SQL y las pruebas automatizadas, y después cada ajuste pedido.
+- **Diagnóstico:** interpretar los errores del entorno (activación del entorno virtual en PowerShell, `.env`, contraseña de PostgreSQL, rutas en Git Bash).
+- **Verificación previa:** antes de entregar cada cambio, la IA ejecutó en su propio entorno las pruebas automatizadas y recorridos en un navegador automatizado (Playwright). Esos recorridos no forman parte del repositorio.
+- **Documentación:** redacción de este README.
+
+Decisiones y trabajo propio:
+- Elección de las tecnologías, la estructura de páginas y los datos de ejemplo (AiMunay y sus 5 prendas).
+- Consultas y acuerdos con el supervisor y el asesor: selector de categorías, filtro de stock, productos eliminados y orden por precio.
+- Montaje y ejecución en el equipo local: entorno virtual, PostgreSQL y pgAdmin, scripts SQL, Git y GitHub.
+- Cambios propios sobre el código generado, por ejemplo renombrar los componentes de esqueleto a `Skeleton`.
+- Revisión del código (cada archivo está comentado en español) y pruebas manuales en la aplicación, en `/docs` y en pgAdmin.
+
+### Cómo se comprobó el resultado
+- **Pruebas automatizadas:** 24 pruebas con pytest sobre una base aparte (`catalogo_test`), ejecutadas con `pytest -v`.
+- **Frontend:** `npm run lint` sin avisos y `npm run build` sin errores.
+- **API:** llamadas desde `/docs` y revisión de los códigos de respuesta (200, 404, 409, 422, 503).
+- **Base de datos:** consultas SQL en pgAdmin equivalentes a cada filtro y orden, comparadas con las respuestas de la API.
+- **Interfaz:** las comprobaciones de la sección "Comprobaciones manuales", en escritorio y en vista de celular (F12).
+
+El repositorio no incluye conversaciones privadas, contraseñas ni el archivo `.env`.
