@@ -1,8 +1,8 @@
 """
 Rutas de la API para productos.
 
-    GET    /productos?buscar=texto&stock=todos|con|sin
-                                     -> lista (filtra por nombre o código y por stock)
+    GET    /productos?buscar=texto&stock=todos|con|sin&orden=nombre|precio_asc|precio_desc
+                                     -> lista (filtra por nombre o código y por stock, y ordena)
     GET    /productos/eliminados?buscar=texto
                                      -> productos eliminados (el más reciente primero)
     GET    /productos/{id}           -> consulta un producto
@@ -70,7 +70,7 @@ def _guardar(db: Session, operacion, codigo: str):
 
 # ---------- Rutas ----------
 
-@router.get("", response_model=list[ProductoSalida], summary="Listar y buscar productos")
+@router.get("", response_model=list[ProductoSalida], summary="Listar, buscar, filtrar y ordenar productos")
 def listar_productos(
     buscar: str | None = Query(
         default=None,
@@ -82,9 +82,13 @@ def listar_productos(
         default="todos",
         description='"todos" = sin filtro; "con" = cantidad mayor que 0; "sin" = cantidad igual a 0.',
     ),
+    orden: Literal["nombre", "precio_asc", "precio_desc"] = Query(
+        default="nombre",
+        description='"nombre" = A-Z; "precio_asc" = precio de menor a mayor; "precio_desc" = de mayor a menor.',
+    ),
     db: Session = Depends(get_db),
 ):
-    return crud.listar(db, buscar, stock)
+    return crud.listar(db, buscar, stock, orden)
 
 
 

@@ -1,5 +1,6 @@
 """
 Operaciones sobre la base de datos (consultar, crear, actualizar, dar de baja).
+
 """
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
@@ -23,12 +24,25 @@ def _filtrar_por_texto(consulta, buscar: str | None):
     )
 
 
-def listar(db: Session, buscar: str | None = None, stock: str | None = None) -> list[Producto]:
+ORDENES = {
+    "nombre": [Producto.nombre],
+    "precio_asc": [Producto.precio.asc(), Producto.nombre],
+    "precio_desc": [Producto.precio.desc(), Producto.nombre],
+}
+
+
+def listar(
+    db: Session,
+    buscar: str | None = None,
+    stock: str | None = None,
+    orden: str = "nombre",
+) -> list[Producto]:
     """
-    Productos activos ordenados por nombre.
+    Productos activos.
       - buscar: filtra por nombre o código.
       - stock: "con" = cantidad mayor que 0; "sin" = cantidad igual a 0; "todos" = sin filtro.
-    Los dos filtros se pueden combinar.
+      - orden: "nombre" (A-Z), "precio_asc" (menor a mayor) o "precio_desc" (mayor a menor).
+    Todo se puede combinar.
     """
     consulta = select(Producto).where(Producto.activo.is_(True))
 
@@ -38,7 +52,7 @@ def listar(db: Session, buscar: str | None = None, stock: str | None = None) -> 
         consulta = consulta.where(Producto.cantidad == 0)
 
     consulta = _filtrar_por_texto(consulta, buscar)
-    consulta = consulta.order_by(Producto.nombre)
+    consulta = consulta.order_by(*ORDENES[orden])
     return list(db.scalars(consulta))
 
 
@@ -81,7 +95,7 @@ def crear(db: Session, datos: ProductoEntrada) -> Producto:
     producto = Producto(**datos.model_dump())
     db.add(producto)
     db.commit()
-    db.refresh(producto)  
+    db.refresh(producto)  # recarga id y creado_en generados por PostgreSQL
     return producto
 
 
@@ -96,7 +110,10 @@ def actualizar(db: Session, producto: Producto, datos: ProductoEntrada) -> Produ
 def dar_de_baja(db: Session, producto: Producto) -> None:
     """
     Quita el producto del catálogo sin borrarlo físicamente (baja lógica).
+
+    Si en la reunión se acuerda borrar definitivamente, basta con cambiar
+    estas dos líneas por:  db.delete(producto) ; db.commit()
     """
     producto.activo = False
-    producto.eliminado_en = func.now()  
+    producto.eliminado_en = func.now()  # fecha y hora del servidor de PostgreSQL
     db.commit()

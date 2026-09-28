@@ -20,6 +20,7 @@ CAMPOS = {
     "cantidad": ("La cantidad", "a"),
     "producto_id": ("El identificador del producto", "o"),
     "stock": ("El filtro de stock", "o"),
+    "orden": ("El orden", "o"),
 }
 
 
