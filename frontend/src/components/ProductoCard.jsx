@@ -27,7 +27,11 @@ export default function ProductoCard({ producto, onEliminar, eliminando, orden =
         </div>
         <div>
           <dt>Cantidad</dt>
-          <dd>{producto.cantidad}</dd>
+          {producto.cantidad === 0 ? (
+            <dd className="texto-sin-stock">Sin stock</dd>
+          ) : (
+            <dd>{producto.cantidad}</dd>
+          )}
         </div>
       </dl>
 

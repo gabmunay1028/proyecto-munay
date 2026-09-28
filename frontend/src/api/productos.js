@@ -42,9 +42,16 @@ async function pedir(ruta, opciones = {}) {
   return datos;
 }
 
-export function listarProductos(buscar = "") {
-  const texto = buscar.trim();
-  const consulta = texto ? `?buscar=${encodeURIComponent(texto)}` : "";
+/**
+ * Lista los productos.
+ *   buscar: texto a buscar en nombre o código
+ *   stock:  "con", "sin" o "" (todos)
+ */
+export function listarProductos(buscar = "", stock = "") {
+  const parametros = new URLSearchParams();
+  if (buscar.trim()) parametros.set("buscar", buscar.trim());
+  if (stock) parametros.set("stock", stock);
+  const consulta = parametros.size ? `?${parametros}` : "";
   return pedir(`/productos${consulta}`);
 }
 

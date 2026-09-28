@@ -2,7 +2,7 @@
  * Esqueletos de carga: bloques grises con brillo que ocupan el lugar del
  * contenido mientras llega del backend, para que la página no "salte".
  *
- * Solo se hacen visibles si la carga tarda más de 150 ms (ver .esqueleto-contenedor
+ * Solo se hacen visibles si la carga tarda más de 150 ms (ver .skeleton-contenedor
  * en index.css); si todo es rápido, el usuario no ve un parpadeo.
  */
 
@@ -14,7 +14,7 @@ export function Skeleton({ ancho = "100%", alto = 16, className = "" }) {
 /** Tarjetas de producto de relleno para el catálogo. */
 export function SkeletonTarjetas({ cantidad = 6 }) {
   return (
-    <div className="grilla esqueleto-contenedor" aria-hidden="true">
+    <div className="grilla skeleton-contenedor" aria-hidden="true">
       {Array.from({ length: cantidad }, (_, indice) => (
         <div key={indice} className="tarjeta">
           <div className="tarjeta__cabecera">
@@ -42,7 +42,7 @@ export function SkeletonTarjetas({ cantidad = 6 }) {
 
 export function  SkeletonFormulario() {
   return (
-    <div className="esqueleto-contenedor" aria-hidden="true">
+    <div className="skeleton-contenedor" aria-hidden="true">
       <div className="formulario">
         <CampoSkeleton />
         <CampoSkeleton  />

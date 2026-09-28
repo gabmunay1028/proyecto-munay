@@ -8,6 +8,7 @@ import {
 } from "../../api/productos.js";
 import Aviso from "../../components/Aviso.jsx";
 import { SkeletonFormulario } from "../../components/Skeleton.jsx";
+import { IconoVolver } from "../../components/Iconos.jsx";
 import SelectorCategoria from "../../components/SelectorCategoria.jsx";
 import { validarProducto } from "../../utils/validaciones.js";
 
@@ -132,8 +133,11 @@ export default function FormularioProducto() {
 
   return (
     <section className="pagina-formulario">
-      <Link to="/" className="enlace-volver">
-        ← Volver al catálogo
+      {/* Por dentro es un enlace (permite "abrir en pestaña nueva" y los lectores de
+          pantalla lo anuncian como navegación); por fuera se ve como un botón */}
+      <Link to="/" className="boton boton--secundario boton--volver">
+        <IconoVolver />
+        Volver al catálogo
       </Link>
       <h1>{esEdicion ? "Editar producto" : "Nuevo producto"}</h1>
       <p className="texto-suave">
