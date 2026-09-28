@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { IconoPapelera } from "./Iconos.jsx";
 
 /**
- * Ventana de confirmación con el estilo de la app (reemplaza a window.confirm).
+ * Ventana de confirmación 
  */
 export default function ConfirmarDialogo({
   abierto,

@@ -6,12 +6,14 @@ import Buscador from "../../components/Buscador.jsx";
 import ConfirmarDialogo from "../../components/ConfirmarDialogo.jsx";
 import { SkeletonTarjetas } from "../../components/Skeleton.jsx";
 import FiltroStock from "../../components/FiltroStock.jsx";
+import OrdenProductos from "../../components/OrdenProductos.jsx";
 import ProductoCard from "../../components/ProductoCard.jsx";
 
 
 const DESCRIPCION_STOCK = { con: " con stock", sin: " sin stock" };
 
-///Página principal: bienvenida, barra de herramientas 
+// Página principal: bienvenida, barra de herramientas 
+
 export default function Catalogo() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,15 +21,16 @@ export default function Catalogo() {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [stock, setStock] = useState(""); 
+  const [orden, setOrden] = useState("nombre"); 
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(false);
   const [recargas, setRecargas] = useState(0); 
   const [idEliminando, setIdEliminando] = useState(null);
-
+ 
   const [porEliminar, setPorEliminar] = useState(null);
-
-  const [aviso, setAviso] = useState(location.state?.aviso ?? null);
   
+  const [aviso, setAviso] = useState(location.state?.aviso ?? null);
+ 
   const esperarTeclas = useRef(false);
 
   const cerrarAviso = useCallback(() => setAviso(null), []);
@@ -40,11 +43,18 @@ export default function Catalogo() {
   }
 
   function filtrar(valor) {
-    esperarTeclas.current = false; // el filtro responde al instante
+    esperarTeclas.current = false; 
     setStock(valor);
     setCargando(true);
   }
 
+  function ordenar(valor) {
+    esperarTeclas.current = false; 
+    setOrden(valor);
+    setCargando(true);
+  }
+
+  // Quita búsqueda y filtro de stock; el orden elegido se mantiene
   function quitarFiltros() {
     esperarTeclas.current = false;
     setBusqueda("");
@@ -65,14 +75,14 @@ export default function Catalogo() {
     }
   }, [location, navigate]);
 
-  // Pide los productos al backend. Al escribir en el buscador espera 300 ms
+  // Pide los productos al backend
   useEffect(() => {
     let vigente = true; // evita mostrar una respuesta vieja si llega tarde
 
     const temporizador = setTimeout(
       async () => {
         try {
-          const datos = await listarProductos(busqueda, stock);
+          const datos = await listarProductos(busqueda, stock, orden);
           if (vigente) {
             setProductos(datos);
             setErrorCarga(false);
@@ -94,7 +104,7 @@ export default function Catalogo() {
       vigente = false;
       clearTimeout(temporizador);
     };
-  }, [busqueda, stock, recargas]);
+  }, [busqueda, stock, orden, recargas]);
 
   // Se llama al pulsar "Eliminar" en la ventana de confirmación
   async function confirmarEliminacion() {
@@ -132,6 +142,7 @@ export default function Catalogo() {
       <div className="catalogo__herramientas">
         <Buscador valor={busqueda} onCambiar={buscar} />
         <FiltroStock valor={stock} onCambiar={filtrar} />
+        <OrdenProductos valor={orden} onCambiar={ordenar} />
         <Link to="/productos/nuevo" className="boton boton--primario">
           + Nuevo producto
         </Link>

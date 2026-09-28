@@ -1,5 +1,5 @@
-// Todas las llamadas al backend en un solo lugar.
-
+//Todas las llamadas al backend en un solo lugar.
+ 
 import { URL_API } from "../config.js";
 
 export class ErrorApi extends Error {
@@ -36,10 +36,12 @@ async function pedir(ruta, opciones = {}) {
   return datos;
 }
 
-export function listarProductos(buscar = "", stock = "") {
+
+export function listarProductos(buscar = "", stock = "", orden = "nombre") {
   const parametros = new URLSearchParams();
   if (buscar.trim()) parametros.set("buscar", buscar.trim());
   if (stock) parametros.set("stock", stock);
+  if (orden !== "nombre") parametros.set("orden", orden);
   const consulta = parametros.size ? `?${parametros}` : "";
   return pedir(`/productos${consulta}`);
 }

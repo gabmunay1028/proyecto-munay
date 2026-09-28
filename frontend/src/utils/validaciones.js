@@ -5,7 +5,7 @@ const TEXTOS = {
   categoria: { etiqueta: "La categoría", genero: "a", maximo: 50 },
 };
 
-const PRECIO_MAXIMO = 99_999_999.99; // NUMERIC(10,2) en PostgreSQL
+const PRECIO_MAXIMO = 99_999_999.99; // NUMERIC(10,2)  PostgreSQL
 const CANTIDAD_MAXIMA = 2_147_483_647; // INTEGER en PostgreSQL
 
 export function validarProducto(producto) {

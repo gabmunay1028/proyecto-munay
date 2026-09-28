@@ -33,7 +33,7 @@ export default function Eliminados() {
     setCargando(true);
   }
 
-  // Pide la lista al backend (espera 300 ms tras la última tecla del buscador)
+  // Pide la lista al backend 
   useEffect(() => {
     let vigente = true;
 

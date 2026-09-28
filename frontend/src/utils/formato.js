@@ -11,10 +11,10 @@ const formatoFecha = new Intl.DateTimeFormat("es-PE", {
 });
 
 /**
- * Fecha del backend ("2026-09-28T12:40:01.123456") como "28 sept 2026, 12:40".
+ * Fecha del backend ("2026-09-28T12:40:01.123456") 
  */
 export function formatearFecha(texto) {
   if (!texto) return null;
-  // Se quedan solo los milisegundos: algunos navegadores no leen 6 decimales
+  // Se quedan solo los milisegundos
   return formatoFecha.format(new Date(texto.slice(0, 23)));
 }

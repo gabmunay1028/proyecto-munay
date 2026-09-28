@@ -95,8 +95,7 @@ export default function FormularioProducto() {
       return;
     }
 
-    // Si escribió como "nueva" una categoría que ya existe (p. ej. "abrigo"),
-    // se usa la registrada ("Abrigo") para no crear duplicados
+    // Si escribió como "nueva" una categoría que ya existe 
     const categoriaEscrita = datos.categoria.trim();
     const categoria =
       categorias.find((c) => c.toLowerCase() === categoriaEscrita.toLowerCase()) ??

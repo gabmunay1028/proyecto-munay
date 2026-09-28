@@ -1,3 +1,4 @@
+
 const propiedades = {
   width: 18,
   height: 18,
@@ -23,6 +24,17 @@ export function IconoFiltro() {
   return (
     <svg {...propiedades}>
       <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
+    </svg>
+  );
+}
+
+export function IconoOrden() {
+  return (
+    <svg {...propiedades}>
+      <path d="m3 16 4 4 4-4" />
+      <path d="M7 20V4" />
+      <path d="m21 8-4-4-4 4" />
+      <path d="M17 4v16" />
     </svg>
   );
 }

@@ -7,7 +7,7 @@ const OPCIONES = [
 ];
 
 /**
- * Lista desplegable con aspecto de botón para filtrar por stock.
+ * Lista desplegable para filtrar por stock
  */
 export default function FiltroStock({ valor, onCambiar }) {
   return (
