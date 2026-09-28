@@ -1,8 +1,8 @@
 # Catálogo de productos — Prueba Full Stack Junior
 
-Aplicación web para registrar, buscar, actualizar y quitar productos del catálogo de una empresa comercial.
+AiMunay para registrar, buscar, actualizar y quitar productos del catálogo de una empresa comercial.
 
-- **Backend:** Python + FastAPI + SQLAlchemy
+- **Backend:** Python + FastAPI 
 - **Base de datos:** PostgreSQL
 - **Frontend:** React + Vite + React Router
 
@@ -10,11 +10,12 @@ Aplicación web para registrar, buscar, actualizar y quitar productos del catál
 
 ## Objetivo
 
-> *(Completar después de la reunión con el responsable del negocio.)*
+Crear un sitio web que sirva como catalogo de productos para registrar, editar, eliminar y consultar funcionalidades para los productos
+que pueda tener la tienda en su disponibilidad.
 
 ## Alcance acordado
 
-> *(Completar con las definiciones finales recibidas.)*
+Se realizo la aplicacion AiMunay como respuesta al documento pedido.
 
 ## Decisiones y supuestos
 
@@ -126,36 +127,36 @@ Documentación interactiva: **http://localhost:8000/docs**
 
 ## Cómo ejecutarlo
 
-**Requisitos:** Python 3.10 o superior, PostgreSQL 14 o superior (con pgAdmin) y Node.js 20.19 o superior.
+**Requisitos:** Python 3.10 o superior, PostgreSQL 14 o superior (con la interfaz pgAdmin) y Node.js 20.19 o superior.
 
 ### 1. Preparar la base de datos
 
-1. En pgAdmin crea dos bases: **`catalogo`** y **`catalogo_test`**
+1. En pgAdmin crear dos bases de datos: **`catalogo`** y **`catalogo_test`**
    (clic derecho en *Databases* → *Create* → *Database…*).
 2. Selecciona la base `catalogo`, abre la **Herramienta de consultas** (*Query Tool*) y ejecuta, en este orden:
    - `backend/sql/01_crear_tabla.sql`
    - `backend/sql/02_datos_prueba.sql` (carga 5 productos ficticios)
-3. La base `catalogo_test` no necesita scripts: las pruebas crean su tabla solas.
-4. **Solo si tu base `catalogo` se creó antes de la página de eliminados**, ejecuta también `backend/sql/03_agregar_fecha_eliminacion.sql`. Agrega la columna con la fecha de eliminación; en una instalación nueva no hace falta, pero ejecutarlo no hace daño.
+3. La base `catalogo_test` no necesita scripts ya las pruebas crean su tabla solas.
+4. **Solo si la base `catalogo` se creó antes de la página de eliminados**, se ejecuta también `backend/sql/03_agregar_fecha_eliminacion.sql`. Agregar la columna con la fecha de eliminación; en una instalación nueva no hace falta, pero ejecutarlo no hace daño.
 
-### 2. Levantar el backend (terminal 1)
+### 2. Levantar el backend (terminal powershell)
 
 ```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate          # Windows  (Mac/Linux: source .venv/bin/activate)
+.venv\Scripts\activate          
 pip install -r requirements.txt
-copy .env.example .env          # Windows  (Mac/Linux: cp .env.example .env)
+copy .env.example .env          
 ```
 
-Abre `.env` y reemplaza `TU_CLAVE` por la contraseña de tu usuario de PostgreSQL. Luego:
+Abre `.env` y reemplaza `TU_CLAVE` por la contraseña del usuario de PostgreSQL. Luego:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
 - API: http://localhost:8000
-- Documentación y pruebas manuales: http://localhost:8000/docs
+- Documentación y pruebas manuales en fastapi: http://localhost:8000/docs
 
 > Si PowerShell no deja activar el entorno, ejecuta una vez
 > `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
@@ -166,7 +167,7 @@ uvicorn app.main:app --reload
 ```bash
 cd frontend
 npm install
-copy .env.example .env          # Windows  (Mac/Linux: cp .env.example .env)
+copy .env.example .env          
 npm run dev
 ```
 
@@ -267,19 +268,19 @@ Reglas de negocio cubiertas:
 
 ## Ajustes solicitados durante la revisión
 
-**Filtro de stock (asesor, 28/09):** ver solo los productos sin stock.
+**Filtro de stock :** ver solo los productos sin stock.
 - Supuestos confirmados antes de programar: "sin stock" = cantidad 0, y se agregó la opción "Todos los productos" para poder volver a la lista completa.
 - Ubicación: junto al buscador, porque ambos acotan la lista; "Nuevo producto" pasó a la misma barra y la bienvenida quedó centrada.
 - Verificación: 4 pruebas automáticas nuevas en el backend (`test_filtro_stock.py`) y las comprobaciones manuales 13, 14 y 21 a 24.
 
-**Productos eliminados (supervisor, 28/09):** que el usuario pueda ver qué productos se eliminaron, para no intentar crear uno que ya existió.
+**Productos eliminados :** que el usuario pueda ver qué productos se eliminaron, para no intentar crear uno que ya existió.
 - Nombre: "Productos eliminados" y no "Historial", porque un historial haría esperar todos los cambios (ediciones, quién y cuándo); aquí solo se muestran los eliminados.
 - Alcance: solo consulta, sin restaurar, como se pidió.
 - Cambio en la base: nueva columna `eliminado_en` con la fecha de eliminación (script `03_agregar_fecha_eliminacion.sql` para bases existentes).
 - Se enlaza desde el encabezado, desde la ventana de eliminar y desde el aviso de código ocupado.
 - Verificación: 4 pruebas automáticas nuevas (`test_eliminados.py`) y las comprobaciones manuales 15, 16 y 25 a 29.
 
-**Orden por precio (asesor, 28/09):** ordenar el catálogo por precio.
+**Orden por precio:** ordenar el catálogo por precio.
 - Se implementó como una lista aparte del filtro de stock, porque ordenar no quita productos: así se pueden combinar (por ejemplo, "sin stock" del más caro al más barato).
 - Opciones: Nombre (A–Z) por defecto, precio de menor a mayor y de mayor a menor; los empates se ordenan por nombre para que el resultado sea siempre el mismo.
 - Se resuelve en el backend (`orden=precio_asc|precio_desc`), igual que la búsqueda y el filtro.
@@ -339,19 +340,17 @@ Reglas de negocio cubiertas:
 - **Documentación de apoyo:** la documentación interactiva de la propia API (`/docs`).
 
 ### Uso de inteligencia artificial
-Se usó **Claude**, asistente de IA de Anthropic, como apoyo durante todo el desarrollo:
+Se usó **Claude**, asistente de IA como apoyo en el desarrollo:
 - **Análisis:** revisar el encargo, identificar las preguntas para la reunión y proponer la arquitectura.
 - **Código:** generar la primera versión del backend, el frontend, los scripts SQL y las pruebas automatizadas, y después cada ajuste pedido.
-- **Diagnóstico:** interpretar los errores del entorno (activación del entorno virtual en PowerShell, `.env`, contraseña de PostgreSQL, rutas en Git Bash).
-- **Verificación previa:** antes de entregar cada cambio, la IA ejecutó en su propio entorno las pruebas automatizadas y recorridos en un navegador automatizado (Playwright). Esos recorridos no forman parte del repositorio.
-- **Documentación:** redacción de este README.
+- **Diagnóstico:** interpretar los errores del entorno.
+- **Documentación:**  README.
 
-Decisiones y trabajo propio:
-- Elección de las tecnologías, la estructura de páginas y los datos de ejemplo (AiMunay y sus 5 prendas).
+### Decisiones y trabajo propio:
+- Elección de las tecnologías, la estructura de páginas y los datos de ejemplo.
 - Consultas y acuerdos con el supervisor y el asesor: selector de categorías, filtro de stock, productos eliminados y orden por precio.
 - Montaje y ejecución en el equipo local: entorno virtual, PostgreSQL y pgAdmin, scripts SQL, Git y GitHub.
-- Cambios propios sobre el código generado, por ejemplo renombrar los componentes de esqueleto a `Skeleton`.
-- Revisión del código (cada archivo está comentado en español) y pruebas manuales en la aplicación, en `/docs` y en pgAdmin.
+- Revisión del código y pruebas manuales en la aplicación, en `/docs` y en pgAdmin.
 
 ### Cómo se comprobó el resultado
 - **Pruebas automatizadas:** 24 pruebas con pytest sobre una base aparte (`catalogo_test`), ejecutadas con `pytest -v`.
