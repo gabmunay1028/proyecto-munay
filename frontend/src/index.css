@@ -562,9 +562,6 @@ select:focus-visible {
 
 /* ---------- Animaciones de las tarjetas ---------- */
 
-/* Al aparecer, cada tarjeta sube un poco con una pequeña demora escalonada.
-   "backwards" aplica el estado inicial durante la demora, pero al terminar
-   deja libre la propiedad transform para que funcione la elevación. */
 .tarjeta--producto {
   animation: entrar-tarjeta 280ms ease-out backwards;
   animation-delay: calc(min(var(--orden, 0), 8) * 45ms);
@@ -604,9 +601,9 @@ select:focus-visible {
   }
 }
 
-/* ---------- Esqueletos de carga ---------- */
+/* ---------- Skeleton de Carga ---------- */
 
-/* Aparece solo si la carga tarda más de 150 ms, para evitar un parpadeo */
+
 .skeleton-contenedor {
   animation: aparecer 200ms ease-out 150ms backwards;
 }
@@ -644,8 +641,7 @@ select:focus-visible {
   }
 }
 
-/* ---------- Movimiento reducido ----------
-   Si la persona pidió a su sistema reducir el movimiento, se quitan las animaciones */
+/* ---------- Movimiento reducido ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

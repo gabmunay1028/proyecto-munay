@@ -19,7 +19,6 @@ export default function App() {
       <main className="contenedor contenido">
         <Routes>
           <Route path="/" element={<Catalogo />} />
-          {/* "key" distinta: al pasar de editar a nuevo, el formulario empieza vacío */}
           <Route path="/productos/nuevo" element={<FormularioProducto key="nuevo" />} />
           <Route path="/productos/:id/editar" element={<FormularioProducto key="editar" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
