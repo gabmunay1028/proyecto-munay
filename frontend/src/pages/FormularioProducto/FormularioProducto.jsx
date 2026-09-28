@@ -14,10 +14,8 @@ import { validarProducto } from "../../utils/validaciones.js";
 
 const FORMULARIO_VACIO = { codigo: "", nombre: "", categoria: "", precio: "", cantidad: "" };
 
-/**
- * Formulario para registrar un producto nuevo (/productos/nuevo)
- * o editar uno existente (/productos/:id/editar).
- */
+// Formulario para registrar un producto nuevo (/productos/nuevo) o editar uno existente (/productos/:id/editar).
+ 
 export default function FormularioProducto() {
   const { id } = useParams();
   const esEdicion = Boolean(id);
@@ -133,8 +131,6 @@ export default function FormularioProducto() {
 
   return (
     <section className="pagina-formulario">
-      {/* Por dentro es un enlace (permite "abrir en pestaña nueva" y los lectores de
-          pantalla lo anuncian como navegación); por fuera se ve como un botón */}
       <Link to="/" className="boton boton--secundario boton--volver">
         <IconoVolver />
         Volver al catálogo
@@ -146,7 +142,7 @@ export default function FormularioProducto() {
           : "Completa los datos para registrar el producto en el catálogo."}
       </p>
 
-      {/* Mientras cargan los datos: el título ya se ve y el formulario aparece como esqueleto */}
+      
       {cargando && (
         <>
           <p className="visualmente-oculto" role="status">

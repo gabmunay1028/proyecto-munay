@@ -69,7 +69,7 @@ h1 {
 
 .encabezado__contenido {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   padding-block: 14px;
 }
@@ -83,6 +83,38 @@ h1 {
 
 .encabezado__subtitulo {
   color: var(--texto-suave);
+}
+
+/* Enlaces "Catálogo" y "Eliminados" a la derecha del encabezado */
+.encabezado__nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.encabezado__enlace {
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--texto-suave);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.encabezado__enlace:hover {
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+/* Página actual (NavLink agrega la clase "active") */
+.encabezado__enlace.active {
+  background: #eef4fd;
+  color: var(--primario);
+}
+
+.encabezado__enlace:focus-visible {
+  outline: 3px solid rgb(31 95 191 / 35%);
+  outline-offset: 2px;
 }
 
 /* ---------- Botones ---------- */
@@ -437,6 +469,76 @@ input:focus-visible,
   margin-bottom: 0;
 }
 
+/* ---------- Productos eliminados ---------- */
+.eliminados__buscador {
+  margin-top: 20px;
+}
+
+.tabla-contenedor {
+  overflow: hidden;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--borde);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tabla th {
+  background: #f8f9fb;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.tabla tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.tabla tbody tr:hover {
+  background: #f8f9fb;
+}
+
+.tabla__numero {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tabla .tabla__numero {
+  text-align: right;
+}
+
+.tabla__nombre {
+  font-weight: 600;
+}
+
+.skeleton-tabla__fila {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.skeleton-tabla__fila:last-child {
+  border-bottom: 0;
+}
+
 /* ---------- Formulario ---------- */
 .pagina-formulario {
   max-width: 560px;
@@ -538,7 +640,56 @@ select:focus-visible {
 }
 
 /* ---------- Pantallas pequeñas ---------- */
+/* En pantallas angostas la tabla se convierte en fichas: cada celda muestra su título */
+@media (max-width: 640px) {
+  .tabla thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .tabla,
+  .tabla tbody,
+  .tabla tr,
+  .tabla td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla tr {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .tabla tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .tabla td,
+  .tabla .tabla__numero {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 16px;
+    border: 0;
+    text-align: right;
+  }
+
+  .tabla td::before {
+    content: attr(data-etiqueta);
+    color: var(--texto-suave);
+    font-weight: 400;
+    text-align: left;
+  }
+}
+
 @media (max-width: 520px) {
+  .encabezado__subtitulo {
+    display: none;
+  }
+
   /* En celular: buscador, filtro y "Nuevo producto" ocupan cada uno una fila completa */
   .catalogo__herramientas .buscador,
   .catalogo__herramientas .filtro,
@@ -562,6 +713,9 @@ select:focus-visible {
 
 /* ---------- Animaciones de las tarjetas ---------- */
 
+/* Al aparecer, cada tarjeta sube un poco con una pequeña demora escalonada.
+   "backwards" aplica el estado inicial durante la demora, pero al terminar
+   deja libre la propiedad transform para que funcione la elevación. */
 .tarjeta--producto {
   animation: entrar-tarjeta 280ms ease-out backwards;
   animation-delay: calc(min(var(--orden, 0), 8) * 45ms);
@@ -601,9 +755,9 @@ select:focus-visible {
   }
 }
 
-/* ---------- Skeleton de Carga ---------- */
+/* ---------- Esqueletos de carga ---------- */
 
-
+/* Aparece solo si la carga tarda más de 150 ms, para evitar un parpadeo */
 .skeleton-contenedor {
   animation: aparecer 200ms ease-out 150ms backwards;
 }
@@ -641,7 +795,8 @@ select:focus-visible {
   }
 }
 
-/* ---------- Movimiento reducido ---------- */
+/* ---------- Movimiento reducido ----------
+   Si la persona pidió a su sistema reducir el movimiento, se quitan las animaciones */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

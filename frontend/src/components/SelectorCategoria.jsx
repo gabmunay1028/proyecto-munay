@@ -3,9 +3,7 @@ import { useState } from "react";
 const NUEVA = "__nueva__"; // valor especial de la opción "+ Nueva categoría…"
 
 /**
- * Campo de categoría: una lista con las categorías ya registradas y la opción
- * de crear una nueva escribiéndola.
- * Si no hay categorías (o no se pudieron cargar), muestra directamente la caja de texto.
+ * Campo de categoría: una lista con las categorías ya registradas y la opción Si no hay categorías muestra directamente la caja de texto.
  */
 export default function SelectorCategoria({ categorias, valor, error, onCambiar }) {
   const hayLista = categorias.length > 0;

@@ -3,11 +3,6 @@ import { IconoPapelera } from "./Iconos.jsx";
 
 /**
  * Ventana de confirmación con el estilo de la app (reemplaza a window.confirm).
- *
- * Usa el elemento <dialog> del navegador, que ya trae:
- *   - el fondo oscurecido y el resto de la página bloqueado
- *   - el cierre con la tecla Esc
- *   - el foco del teclado dentro de la ventana (empieza en "Cancelar", la opción segura)
  */
 export default function ConfirmarDialogo({
   abierto,
@@ -37,7 +32,7 @@ export default function ConfirmarDialogo({
       className="dialogo"
       aria-labelledby="dialogo-titulo"
       aria-describedby="dialogo-mensaje"
-      onClose={onCancelar} // se dispara al cerrar de cualquier forma, incluida la tecla Esc
+      onClose={onCancelar} 
       onClick={clicEnFondo}
     >
       <div className="dialogo__contenido">

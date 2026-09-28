@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
+import { formatoSoles } from "../utils/formato.js";
 
-// Muestra el precio como "S/ 59.90"
-const formatoSoles = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" });
+//Tarjeta de un producto con sus datos y las acciones Editar y Eliminar.
 
-/**
- * Tarjeta de un producto con sus datos y las acciones Editar y Eliminar.
- * "orden" es su posición en la lista: sirve para que las tarjetas aparezcan una tras otra.
- */
+
 export default function ProductoCard({ producto, onEliminar, eliminando, orden = 0 }) {
   const clases = `tarjeta tarjeta--producto${eliminando ? " tarjeta--eliminando" : ""}`;
   return (

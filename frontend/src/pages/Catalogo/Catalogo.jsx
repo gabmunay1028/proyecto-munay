@@ -8,29 +8,26 @@ import { SkeletonTarjetas } from "../../components/Skeleton.jsx";
 import FiltroStock from "../../components/FiltroStock.jsx";
 import ProductoCard from "../../components/ProductoCard.jsx";
 
-// Texto que se agrega al conteo y a los mensajes según el filtro de stock
+
 const DESCRIPCION_STOCK = { con: " con stock", sin: " sin stock" };
 
-/**
- * Página principal: bienvenida, barra de herramientas (buscador, filtro de stock
- * y "Nuevo producto") y tarjetas de productos.
- */
+///Página principal: bienvenida, barra de herramientas 
 export default function Catalogo() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [stock, setStock] = useState(""); // "" = todos, "con" o "sin"
+  const [stock, setStock] = useState(""); 
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(false);
-  const [recargas, setRecargas] = useState(0); // al cambiar, se vuelve a pedir la lista
+  const [recargas, setRecargas] = useState(0); 
   const [idEliminando, setIdEliminando] = useState(null);
-  // Producto que espera confirmación para eliminarse (null = ventana cerrada)
+
   const [porEliminar, setPorEliminar] = useState(null);
-  // Mensaje que puede llegar desde el formulario ("Producto registrado...")
+
   const [aviso, setAviso] = useState(location.state?.aviso ?? null);
-  // true solo cuando el cambio vino de escribir en el buscador (para esperar 300 ms)
+  
   const esperarTeclas = useRef(false);
 
   const cerrarAviso = useCallback(() => setAviso(null), []);
@@ -69,7 +66,6 @@ export default function Catalogo() {
   }, [location, navigate]);
 
   // Pide los productos al backend. Al escribir en el buscador espera 300 ms
-  // después de la última tecla, para no hacer una petición por cada letra.
   useEffect(() => {
     let vigente = true; // evita mostrar una respuesta vieja si llega tarde
 
@@ -192,7 +188,9 @@ export default function Catalogo() {
         titulo="¿Eliminar este producto?"
         mensaje={
           porEliminar &&
-          `«${porEliminar.nombre}» (${porEliminar.codigo}) dejará de aparecer en el catálogo.`
+          `«${porEliminar.nombre}» (${porEliminar.codigo}) dejará de aparecer en el catálogo. ` +
+            "Podrás verlo en «Productos eliminados»."
+
         }
         textoConfirmar="Eliminar"
         onConfirmar={confirmarEliminacion}

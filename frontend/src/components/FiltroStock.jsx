@@ -1,6 +1,5 @@
 import { IconoFiltro } from "./Iconos.jsx";
 
-// "" = sin filtro. Los valores "con" y "sin" son los que entiende el backend.
 const OPCIONES = [
   { valor: "", texto: "Todos los productos" },
   { valor: "con", texto: "Productos con stock" },
@@ -9,8 +8,6 @@ const OPCIONES = [
 
 /**
  * Lista desplegable con aspecto de botón para filtrar por stock.
- * Es un <select> nativo: funciona con teclado, en celular y con lectores de pantalla.
- * Cuando hay un filtro activo, se resalta en azul.
  */
 export default function FiltroStock({ valor, onCambiar }) {
   return (

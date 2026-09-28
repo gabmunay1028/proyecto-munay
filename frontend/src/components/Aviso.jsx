@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 /**
  * Mensaje para el usuario: "exito" (verde) o "error" (rojo).
- * Los de éxito se cierran solos a los 5 segundos; los de error quedan hasta cerrarlos.
  */
 export default function Aviso({ tipo, texto, onCerrar }) {
   useEffect(() => {

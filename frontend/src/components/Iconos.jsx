@@ -1,7 +1,3 @@
-/**
- * Íconos dibujados con SVG (sin librerías). Toman el color del texto que los rodea.
- * aria-hidden: son decorativos; el texto del botón ya dice qué hace.
- */
 const propiedades = {
   width: 18,
   height: 18,

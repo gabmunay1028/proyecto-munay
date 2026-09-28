@@ -1,12 +1,4 @@
-/**
- * Esqueletos de carga: bloques grises con brillo que ocupan el lugar del
- * contenido mientras llega del backend, para que la página no "salte".
- *
- * Solo se hacen visibles si la carga tarda más de 150 ms (ver .skeleton-contenedor
- * en index.css); si todo es rápido, el usuario no ve un parpadeo.
- */
-
-/** Un bloque gris animado. */
+// El skeleton funciona como una pagina de carga visual cuando se refresca la pagina
 export function Skeleton({ ancho = "100%", alto = 16, className = "" }) {
   return <span className={`skeleton ${className}`} style={{ width: ancho, height: alto }} />;
 }
@@ -56,6 +48,23 @@ export function  SkeletonFormulario() {
           <Skeleton ancho={170} alto={40} />
         </div>
       </div>
+    </div>
+  );
+}
+
+
+export function SkeletonTabla({ filas = 5 }) {
+  return (
+    <div className="tabla-contenedor skeleton-contenedor" aria-hidden="true">
+      {Array.from({ length: filas }, (_, indice) => (
+        <div key={indice} className="skeleton-tabla__fila">
+          <Skeleton ancho={70} alto={22} className="skeleton--pildora" />
+          <Skeleton ancho="28%" />
+          <Skeleton ancho="16%" />
+          <Skeleton ancho="12%" />
+          <Skeleton ancho="20%" />
+        </div>
+      ))}
     </div>
   );
 }

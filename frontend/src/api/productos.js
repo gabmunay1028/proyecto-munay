@@ -1,11 +1,5 @@
-/**
- * Todas las llamadas al backend en un solo lugar.
- *
- * Si el backend responde con error, se lanza un ErrorApi con:
- *   - message: el texto en español que envía el backend en "detail"
- *   - errores: los mensajes por campo ({ precio: "El precio debe ser mayor que 0." })
- *   - estado:  el código HTTP (404, 409, 422, 503...)
- */
+// Todas las llamadas al backend en un solo lugar.
+
 import { URL_API } from "../config.js";
 
 export class ErrorApi extends Error {
@@ -42,17 +36,19 @@ async function pedir(ruta, opciones = {}) {
   return datos;
 }
 
-/**
- * Lista los productos.
- *   buscar: texto a buscar en nombre o código
- *   stock:  "con", "sin" o "" (todos)
- */
 export function listarProductos(buscar = "", stock = "") {
   const parametros = new URLSearchParams();
   if (buscar.trim()) parametros.set("buscar", buscar.trim());
   if (stock) parametros.set("stock", stock);
   const consulta = parametros.size ? `?${parametros}` : "";
   return pedir(`/productos${consulta}`);
+}
+
+/** Productos eliminados, del más reciente al más antiguo. */
+export function listarEliminados(buscar = "") {
+  const texto = buscar.trim();
+  const consulta = texto ? `?buscar=${encodeURIComponent(texto)}` : "";
+  return pedir(`/productos/eliminados${consulta}`);
 }
 
 export function obtenerProducto(id) {
