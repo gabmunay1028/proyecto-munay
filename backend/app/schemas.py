@@ -1,13 +1,13 @@
 """
 Esquemas de Pydantic: definen qué datos ENTRAN y SALEN de la API.
-
-Aquí viven las validaciones de cada campo. Si algo no cumple, FastAPI
-responde 422 automáticamente (el mensaje se traduce en errores.py).
 """
 from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+# Mayor número que cabe en una columna INTEGER de PostgreSQL.
+CANTIDAD_MAXIMA = 2_147_483_647
 
 
 class ProductoEntrada(BaseModel):
@@ -20,7 +20,7 @@ class ProductoEntrada(BaseModel):
     nombre: str = Field(min_length=1, max_length=100, examples=["Polera oversize"])
     categoria: str = Field(min_length=1, max_length=50, examples=["Abrigo"])
     precio: Decimal = Field(gt=0, max_digits=10, decimal_places=2, examples=[64.90])
-    cantidad: int = Field(ge=0, examples=[12])
+    cantidad: int = Field(ge=0, le=CANTIDAD_MAXIMA, examples=[12])
 
     @field_validator("codigo")
     @classmethod
@@ -39,9 +39,15 @@ class ProductoSalida(BaseModel):
     codigo: str
     nombre: str
     categoria: str
-    precio: float  # se envía como número (59.9) y no como texto ("59.90")
+    precio: float  
     cantidad: int
     creado_en: datetime
+
+
+class ProductoEliminado(ProductoSalida):
+    """Producto eliminado: los mismos datos más la fecha en que se eliminó."""
+
+    eliminado_en: datetime | None  
 
 
 class Mensaje(BaseModel):

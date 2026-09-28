@@ -1,8 +1,6 @@
 """
 Pruebas de la ruta de categorías.
 
-Ejecutar desde la carpeta backend:
-    pytest -v
 """
 
 

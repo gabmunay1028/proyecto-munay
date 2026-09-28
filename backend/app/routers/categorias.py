@@ -3,8 +3,6 @@ Ruta de categorías.
 
     GET /categorias -> categorías en uso (de productos activos), sin repetir
 
-La usa el formulario del frontend para ofrecer una lista en vez de
-obligar a escribir la categoría cada vez.
 """
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session

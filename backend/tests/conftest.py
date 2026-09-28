@@ -1,9 +1,6 @@
 """
-Configuración compartida de las pruebas.
 
-Las pruebas usan una base APARTE (DATABASE_URL_TEST) para no tocar los datos
-reales. Antes de cada prueba se borra y se vuelve a crear la tabla usando el
-mismo script sql/01_crear_tabla.sql, así también se comprueba que el script funciona.
+Las pruebas usan una base APARTE (DATABASE_URL_TEST) para no tocar los datos reales. 
 """
 import os
 from pathlib import Path

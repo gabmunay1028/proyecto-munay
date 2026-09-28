@@ -1,16 +1,14 @@
 """
 Rutas de la API para productos.
 
-    GET    /productos?buscar=texto&stock=con|sin
+    GET    /productos?buscar=texto&stock=todos|con|sin
                                      -> lista (filtra por nombre o código y por stock)
+    GET    /productos/eliminados?buscar=texto
+                                     -> productos eliminados (el más reciente primero)
     GET    /productos/{id}           -> consulta un producto
     POST   /productos                -> crea
     PUT    /productos/{id}           -> actualiza
     DELETE /productos/{id}           -> quita del catálogo (baja lógica)
-
-Aquí están las REGLAS DE NEGOCIO que responden al usuario:
-  - el código no se puede repetir (409)
-  - un producto que no existe devuelve 404 con un mensaje claro
 """
 from typing import Literal
 
@@ -21,7 +19,7 @@ from sqlalchemy.orm import Session
 from .. import crud
 from ..database import get_db
 from ..models import Producto
-from ..schemas import Mensaje, ProductoEntrada, ProductoSalida
+from ..schemas import Mensaje, ProductoEliminado, ProductoEntrada, ProductoSalida
 
 router = APIRouter(prefix="/productos", tags=["Productos"])
 
@@ -48,8 +46,8 @@ def _validar_codigo_disponible(db: Session, codigo: str, excepto_id: int | None 
         detalle = f"Ya existe un producto con el código {codigo} ({existente.nombre})."
     else:
         detalle = (
-            f"El código {codigo} pertenece a un producto dado de baja "
-            f"({existente.nombre}). Usa otro código."
+            f"El código {codigo} pertenece a un producto eliminado ({existente.nombre}); "
+            "puedes verlo en «Productos eliminados». Usa otro código."
         )
     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=detalle)
 
@@ -79,13 +77,31 @@ def listar_productos(
         max_length=100,
         description="Texto a buscar en el nombre o el código (no distingue mayúsculas).",
     ),
-    stock: Literal["con", "sin"] | None = Query(
-        default=None,
-        description='"con" = cantidad mayor que 0; "sin" = cantidad igual a 0; vacío = todos.',
+    # Tres valores fijos: en /docs se muestra como lista desplegable
+    stock: Literal["todos", "con", "sin"] = Query(
+        default="todos",
+        description='"todos" = sin filtro; "con" = cantidad mayor que 0; "sin" = cantidad igual a 0.',
     ),
     db: Session = Depends(get_db),
 ):
     return crud.listar(db, buscar, stock)
+
+
+
+@router.get(
+    "/eliminados",
+    response_model=list[ProductoEliminado],
+    summary="Listar productos eliminados",
+)
+def listar_eliminados(
+    buscar: str | None = Query(
+        default=None,
+        max_length=100,
+        description="Texto a buscar en el nombre o el código de los productos eliminados.",
+    ),
+    db: Session = Depends(get_db),
+):
+    return crud.listar_eliminados(db, buscar)
 
 
 @router.get("/{producto_id}", response_model=ProductoSalida, summary="Consultar un producto")

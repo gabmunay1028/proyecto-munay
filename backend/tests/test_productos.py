@@ -2,8 +2,6 @@
 
 Se realizan pruebas para que no se peudan repetir.
 
-para el backend solo crear:
-    pytest -v
 """
 import pytest
 

@@ -1,22 +1,12 @@
 """
 Manejo de errores con mensajes en español.
-
-Pydantic responde en inglés por defecto ("Input should be greater than 0").
-Aquí se traducen esos errores para que el frontend pueda mostrarle al usuario
-exactamente por qué no se guardó su producto.
-
-Formato de respuesta de error (siempre igual, para que React lo lea fácil):
-    {
-      "detail": "El precio debe ser mayor que 0.",      <- texto listo para mostrar
-      "errores": {"precio": "El precio debe ser mayor que 0."}   <- por campo
-    }
 """
 import logging
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, ProgrammingError
 
 # Registro que se muestra en el terminal donde corre uvicorn
 registro = logging.getLogger("uvicorn.error")
@@ -87,5 +77,20 @@ async def manejar_error_conexion(request: Request, exc: OperationalError):
         content={
             "detail": "No se pudo conectar con la base de datos. "
             "Verifica que PostgreSQL esté encendido y que el archivo .env sea correcto."
+        },
+    )
+
+
+async def manejar_error_estructura(request: Request, exc: ProgrammingError):
+    """
+    La base existe pero no tiene la estructura que espera el código
+    (por ejemplo, falta una columna nueva porque no se ejecutó un script de backend/sql).
+    """
+    registro.error("La base de datos no tiene la estructura esperada: %s", exc.orig)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "detail": "La base de datos no está actualizada. "
+            "Ejecuta los scripts de la carpeta backend/sql que falten y vuelve a intentar."
         },
     )

@@ -1,10 +1,7 @@
 """
-Pruebas del filtro de stock: GET /productos?stock=con|sin
 
 Regla acordada: "sin stock" = cantidad igual a 0; "con stock" = cantidad mayor que 0.
 
-Ejecutar desde la carpeta backend:
-    pytest -v
 """
 
 

@@ -1,7 +1,5 @@
 -- ============================================================
 -- Datos ficticios iniciales del catálogo (5 productos)
--- Ejecutar DESPUÉS de 01_crear_tabla.sql, sobre la base "catalogo".
--- ON CONFLICT: si ya existen, no los vuelve a insertar.
 -- ============================================================
 
 INSERT INTO productos (codigo, nombre, categoria, precio, cantidad) VALUES

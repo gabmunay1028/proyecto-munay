@@ -1,10 +1,5 @@
 """
 Punto de entrada de la API.
-
-Ejecutar desde la carpeta backend:
-    uvicorn app.main:app --reload
-
-Documentación interactiva (probar todas las rutas): http://localhost:8000/docs
 """
 import os
 
@@ -12,9 +7,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, ProgrammingError
 
-from .errores import manejar_error_conexion, manejar_error_validacion
+from .errores import manejar_error_conexion, manejar_error_estructura, manejar_error_validacion
 from .routers import categorias, productos
 
 load_dotenv()
@@ -36,6 +31,7 @@ app.add_middleware(
 # Errores con mensajes en español
 app.add_exception_handler(RequestValidationError, manejar_error_validacion)
 app.add_exception_handler(OperationalError, manejar_error_conexion)
+app.add_exception_handler(ProgrammingError, manejar_error_estructura)
 
 app.include_router(productos.router)
 app.include_router(categorias.router)

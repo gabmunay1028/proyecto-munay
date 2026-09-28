@@ -1,8 +1,6 @@
 """
 Conexión a PostgreSQL.
 
-Lee la dirección de la base desde el archivo .env (variable DATABASE_URL)
-y entrega una sesión por cada petición que llega a la API.
 """
 import os
 
